@@ -27,7 +27,6 @@ CodeLLDB can also show line info for VS crash dumps! (hit `pause`)
     ],
     "processCreateCommands": [
         "settings set target.run-args value1 value2 value3",
-        // "process launch"
     ]
 },
 ```
