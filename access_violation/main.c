@@ -2,7 +2,9 @@
 
 // Function to handle button clicks
 void OnButtonClick(HWND hwnd) {
-  MessageBox(hwnd, "Hello, Win32!", "Greeting", MB_OK | MB_ICONINFORMATION);
+  // MessageBox(hwnd, "Hello, Win32!", "Greeting", MB_OK | MB_ICONINFORMATION);
+  int *p = NULL;
+  p[0] = 1;
 }
 
 // Window procedure

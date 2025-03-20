@@ -2,6 +2,8 @@
 
 ## Enable Windows Error Reporting
 
+It works with both GCC and VisualStudio!
+
 Show UI
 
 ![](./showui.png)

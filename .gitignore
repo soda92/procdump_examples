@@ -1,5 +1,6 @@
 __cmake*
 build
+build-debug
 compile_*.json
 .cache
 .vs
