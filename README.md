@@ -49,3 +49,16 @@ check service running
 ## Resuslt
 
 <img src="./wer.png" width=500>
+
+
+## References
+
+[Windows Error Reporting][1]
+[analyze core dump using lldb][2]
+[WinDbg and ProcDump][3] (also watch related videos)
+[CodeLLDB analyze core dump][4]
+
+[1]: https://learn.microsoft.com/en-us/troubleshoot/windows-client/system-management-components/windows-error-reporting-diagnostics-enablement-guidance
+[2]: https://learn.microsoft.com/en-us/troubleshoot/developer/webapps/aspnetcore/practice-troubleshoot-linux/lab-1-2-analyze-core-dumps-lldb-debugger
+[3]: https://learn.microsoft.com/en-us/shows/defrag-tools/10-procdump-triggers
+[4]: https://github.com/vadimcn/codelldb/blob/master/MANUAL.md#inspecting-a-core-dump
