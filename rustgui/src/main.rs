@@ -99,7 +99,7 @@ unsafe extern "system" fn window_proc(
             LRESULT(0)
         }
         WM_COMMAND => {
-            if wparam.0 as u32 & 0xFFFF == 1 && (wparam.0 >> 16) as u32 == BN_CLICKED {
+            if wparam.0 as u32 == BN_CLICKED {
                 on_button_click(hwnd);
             }
             LRESULT(0)
