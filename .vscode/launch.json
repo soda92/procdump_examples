@@ -7,6 +7,18 @@
         {
             "type": "lldb",
             "request": "launch",
+            "name": "Custom launch",
+            "targetCreateCommands": [
+                "target create ${workspaceFolder}/access_violation/build-debug/demo.exe --core C:/dumps/demo.exe.42140.dmp"
+            ],
+            "processCreateCommands": [
+                "settings set target.run-args value1 value2 value3",
+                // "process launch"
+            ]
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
             "name": "Debug",
             "program": "${workspaceFolder}/access_violation/build-debug/demo.exe",
             "args": [],
