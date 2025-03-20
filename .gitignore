@@ -2,6 +2,8 @@ __cmake*
 build
 compile_*.json
 .cache
+.vs
+build-vs
 
 # Prerequisites
 *.d
