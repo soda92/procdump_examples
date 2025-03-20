@@ -54,8 +54,11 @@ check service running
 ## References
 
 [Windows Error Reporting][1]
+
 [analyze core dump using lldb][2]
+
 [WinDbg and ProcDump][3] (also watch related videos)
+
 [CodeLLDB analyze core dump][4]
 
 [1]: https://learn.microsoft.com/en-us/troubleshoot/windows-client/system-management-components/windows-error-reporting-diagnostics-enablement-guidance
