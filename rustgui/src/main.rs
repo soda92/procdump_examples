@@ -1,14 +1,13 @@
 #![windows_subsystem = "windows"] // Prevents console window from appearing
 
 use std::ptr;
-use windows::core::{HSTRING, Result, PCSTR};
-use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, WPARAM, POINT};
+use windows::core::{Result, PCSTR};
+use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::System::LibraryLoader::GetModuleHandleA;
-use windows::Win32::UI::Controls::{BS_PUSHBUTTON, CreateWindowExA, CreateWindowExW, BUTTON_STYLE, WS_CHILD, WS_VISIBLE};
 use windows::Win32::UI::WindowsAndMessaging::{
-    DefWindowProcA, DispatchMessageA, GetMessageA, MessageBoxA, PostQuitMessage, RegisterClassA,
-    TranslateMessage, CW_USEDEFAULT, MSG, WNDCLASSA, WM_COMMAND, WM_CREATE, WM_DESTROY,
-    WS_OVERLAPPEDWINDOW, BN_CLICKED,
+    CreateWindowExA, DefWindowProcA, DispatchMessageA, GetMessageA, MessageBoxA,
+    PostQuitMessage, RegisterClassA, TranslateMessage, BN_CLICKED, CW_USEDEFAULT,
+    MSG, WM_COMMAND, WM_CREATE, WM_DESTROY, WNDCLASSA, WS_CHILD, WS_OVERLAPPEDWINDOW, WS_VISIBLE,
 };
 
 fn main() -> Result<()> {
@@ -18,7 +17,7 @@ fn main() -> Result<()> {
 
         let wc = WNDCLASSA {
             lpfnWndProc: Some(window_proc),
-            hInstance: instance,
+            hInstance: instance.into(),
             lpszClassName: class_name,
             ..Default::default()
         };
@@ -36,26 +35,35 @@ fn main() -> Result<()> {
             CW_USEDEFAULT,
             320,
             240,
-            HWND(ptr::null_mut()),
+            Some(HWND(ptr::null_mut())),
             Default::default(),
-            instance,
-            ptr::null_mut(),
+            Some(instance.into()),
+            Some(ptr::null_mut()),
         );
 
-        if hwnd.0 == 0 {
+        if hwnd.is_err() {
             return Err(windows::core::Error::from_win32());
         }
 
-        windows::Win32::UI::WindowsAndMessaging::ShowWindow(hwnd, windows::Win32::UI::WindowsAndMessaging::SW_SHOW);
+        let _ = windows::Win32::UI::WindowsAndMessaging::ShowWindow(
+            hwnd.unwrap(),
+            windows::Win32::UI::WindowsAndMessaging::SW_SHOW,
+        );
 
         let mut msg = MSG::default();
-        while GetMessageA(&mut msg, HWND(ptr::null_mut()), 0, 0).as_bool() {
-            TranslateMessage(&msg);
+        while GetMessageA(&mut msg, Some(HWND(ptr::null_mut())), 0, 0).as_bool() {
+            let _ = TranslateMessage(&msg);
             DispatchMessageA(&msg);
         }
 
         Ok(())
     }
+}
+
+use std::ffi::c_void;
+
+fn convert_i32_to_mut_c_void(value: *const i32) -> *mut c_void {
+    value as *const i32 as *mut c_void
 }
 
 unsafe extern "system" fn window_proc(
@@ -64,7 +72,8 @@ unsafe extern "system" fn window_proc(
     wparam: WPARAM,
     lparam: LPARAM,
 ) -> LRESULT {
-    static mut BUTTON: HWND = HWND(0);
+    static mut BUTTON: HWND = HWND(std::ptr::null_mut());
+    static mut R: i32 = 1;
 
     match msg {
         WM_CREATE => {
@@ -72,24 +81,25 @@ unsafe extern "system" fn window_proc(
                 Default::default(),
                 PCSTR("BUTTON\0".as_ptr()),
                 PCSTR("Click Me\0".as_ptr()),
-                WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+                WS_VISIBLE | WS_CHILD,
                 100,
                 100,
                 100,
                 30,
-                hwnd,
-                1 as windows::Win32::UI::WindowsAndMessaging::HMENU,
-                windows::Win32::System::LibraryLoader::GetModuleHandleA(PCSTR(ptr::null_mut())).unwrap(),
-                ptr::null_mut(),
-            );
-            if BUTTON.0 == 0 {
-                return LRESULT(-1);
-            }
+                Some(hwnd),
+                Some(windows::Win32::UI::WindowsAndMessaging::HMENU(convert_i32_to_mut_c_void(&raw const R))),
+                Some(windows::Win32::System::LibraryLoader::GetModuleHandleA(PCSTR(ptr::null_mut()))
+                    .unwrap().into()),
+                Some(ptr::null_mut()),
+            ).unwrap();
+            // if BUTTON.is == 0 {
+            //     return LRESULT(-1);
+            // }
 
             LRESULT(0)
         }
         WM_COMMAND => {
-            if wparam.0 as u32 & 0xFFFF == 1 && (wparam.0 >> 16) as u32 == BN_CLICKED.0 {
+            if wparam.0 as u32 & 0xFFFF == 1 && (wparam.0 >> 16) as u32 == BN_CLICKED {
                 on_button_click(hwnd);
             }
             LRESULT(0)
@@ -104,9 +114,10 @@ unsafe extern "system" fn window_proc(
 
 unsafe fn on_button_click(hwnd: HWND) {
     MessageBoxA(
-        hwnd,
+        Some(hwnd),
         PCSTR("Hello, Win32!\0".as_ptr()),
         PCSTR("Greeting\0".as_ptr()),
-        windows::Win32::UI::WindowsAndMessaging::MB_OK | windows::Win32::UI::WindowsAndMessaging::MB_ICONINFORMATION,
+        windows::Win32::UI::WindowsAndMessaging::MB_OK
+            | windows::Win32::UI::WindowsAndMessaging::MB_ICONINFORMATION,
     );
 }
